@@ -23,9 +23,9 @@ public class DrawFrame extends JFrame {
     // Declaration of required variables for the draw frame.
     private JLabel statusBar; 
     private DrawPanel drawPanel;
-    private String[] colourNames = {"Black", "White", "Red", "Green","Blue", "Cyan", "Pink", "Yellow"};
+    private String[] colourNames = {"Black", "White", "Red", "Green","Blue", "Cyan", "Pink", "Yellow", "Magenta", "Orange", "Gray"};
     private Color[] colourValues = {Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, 
-                                    Color.CYAN, Color.PINK, Color.YELLOW};
+                                    Color.CYAN, Color.PINK, Color.YELLOW, Color.MAGENTA, Color.ORANGE, Color.GRAY};
     private String[] shapeNames = {"Line", "Rectangle", "Oval"};
     private JComboBox<String> colourChooser;
     private JComboBox<String> shapeChooser;
