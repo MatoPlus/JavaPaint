@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,27 +16,30 @@ import javax.swing.JPanel;
 
 /*
  * Author: Ri Xin Yang
- * Date: April 19, 2019
+ * Date: July 9, 2019
  * Desc: This class is a JFrame sets up what is on the frame to be displayed in the application. 
  */
 public class DrawFrame extends JFrame {
 
     // Declaration of required variables for the draw frame.
+    private static final int LINE_MODE = 0;
     private JLabel statusBar; 
     private DrawPanel drawPanel;
-    private String[] colourNames = {"Black", "White", "Red", "Green","Blue", "Cyan", "Pink", "Yellow", "Magenta", "Orange", "Gray"};
-    private Color[] colourValues = {Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, 
+    private String[] colorNames = {"Black", "White", "Red", "Green","Blue", "Cyan", "Pink", "Yellow", "Magenta", "Orange", "Gray"};
+    private Color[] colorValues = {Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, 
                                     Color.CYAN, Color.PINK, Color.YELLOW, Color.MAGENTA, Color.ORANGE, Color.GRAY};
     private String[] shapeNames = {"Line", "Rectangle", "Oval"};
-    private JComboBox<String> colourChooser;
+    private JComboBox<String> colorChooser;
+    private JComboBox<String> gradientChooser;
     private JComboBox<String> shapeChooser;
     private JButton undoButton;
     private JButton redoButton;
     private JButton clearButton;
     private JPanel interactionPanel;
     private JCheckBox fillBox;
-    private Color selectedColour;
-    private int selectedShapeMode;
+    private JCheckBox gradientBox;
+    private Color shapeColor;
+    private int shapeMode;
 
     // A constructor that creates the frame for display.
     public DrawFrame() {
@@ -51,13 +55,16 @@ public class DrawFrame extends JFrame {
         interactionPanel = new JPanel();
         clearButton = new JButton("Clear");
         fillBox = new JCheckBox("Filled");
+        gradientBox = new JCheckBox("Gradient");
         redoButton = new JButton("Redo");
         undoButton = new JButton("Undo");
-        colourChooser = new JComboBox<String>(colourNames);
+        colorChooser = new JComboBox<String>(colorNames);
+        gradientChooser = new JComboBox<String>(colorNames);
         shapeChooser = new JComboBox<String>(shapeNames);
         ActionListener eventListener = new ButtonEventListener();
         ItemListener comboBoxListener = new ComboBoxEventListener();
-        ItemListener fillBoxListener = new CheckBoxEventListener();
+        ItemListener checkBoxListener = new CheckBoxEventListener();
+
 
         // associate buttons with eventListener
         undoButton.addActionListener(eventListener);
@@ -65,24 +72,34 @@ public class DrawFrame extends JFrame {
         clearButton.addActionListener(eventListener);
 
         // Set JComboBox events and properties 
-        colourChooser.setMaximumRowCount(12);  
+        colorChooser.setMaximumRowCount(11);  
+        gradientChooser.setMaximumRowCount(11);  
         shapeChooser.setMaximumRowCount(3);    
         shapeChooser.setPreferredSize(new Dimension(5,5));
         shapeChooser.setPreferredSize(new Dimension(5,5));
-        colourChooser.addItemListener(comboBoxListener);
+        colorChooser.addItemListener(comboBoxListener);
+        gradientChooser.addItemListener(comboBoxListener);
         shapeChooser.addItemListener(comboBoxListener);
 
         // Check box events.
-        fillBox.addItemListener(fillBoxListener);
+        fillBox.addItemListener(checkBoxListener);
+        gradientBox.addItemListener(checkBoxListener);
+
+        // Setting additional default properties.
+        gradientChooser.setEnabled(false);
+        fillBox.setEnabled(false);
 
         // Set layout and overall set up of interactionPanel.
-        interactionPanel.setLayout(new GridLayout(1, 6, 10, 10));
+        interactionPanel.setLayout(new GridLayout(1, 7, 10, 10));
+        interactionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         interactionPanel.add(undoButton);
         interactionPanel.add(redoButton);
         interactionPanel.add(clearButton);
-        interactionPanel.add(colourChooser);
+        interactionPanel.add(colorChooser);
         interactionPanel.add(shapeChooser);
         interactionPanel.add(fillBox); 
+        interactionPanel.add(gradientBox);
+        interactionPanel.add(gradientChooser);
 
         // Append interactions panel to main panel.
         add(interactionPanel, BorderLayout.NORTH);
@@ -130,6 +147,15 @@ public class DrawFrame extends JFrame {
             else {
                 drawPanel.setIsFilled(false);
             }
+
+            if (gradientBox.isSelected()) {
+                drawPanel.setIsGradient(true);
+                gradientChooser.setEnabled(true);
+            }
+            else {
+                drawPanel.setIsGradient(false);
+                gradientChooser.setEnabled(false);
+            }
         }         
     }
 
@@ -138,16 +164,29 @@ public class DrawFrame extends JFrame {
         // We override the itemStateChanged() method as required by the ActionListener Interface
         @Override 
         public void itemStateChanged(ItemEvent e) {
-            // Change selectedColour depending on user selection.
-            if (e.getSource() == colourChooser) {
-                selectedColour = colourValues[colourChooser.getSelectedIndex()];
-                drawPanel.setSelectedColour(selectedColour);
+            // Change shapeColor depending on user selection.
+            if (e.getSource() == colorChooser) {
+                shapeColor = colorValues[colorChooser.getSelectedIndex()];
+                drawPanel.setShapeColor(shapeColor);
             }
-            // Change selectedShape depending on user selection. Note that selectedShape is an integer, representing
+            // Change shapeMode depending on user selection. Note that shapeMode is an integer, representing
             // the type of shape.
             else if (e.getSource() == shapeChooser) {
-                selectedShapeMode = shapeChooser.getSelectedIndex();
-                drawPanel.setSelectedShapeMode(selectedShapeMode);
+                shapeMode = shapeChooser.getSelectedIndex();
+
+                if (shapeMode == LINE_MODE) {
+                    fillBox.setEnabled(false);
+                }
+                else {
+                    fillBox.setEnabled(true);
+                }
+
+                drawPanel.setShapeMode(shapeMode);
+            }
+            // Change selectedColor depending on user selection.
+            else if (e.getSource() == gradientChooser) {
+                shapeColor = colorValues[gradientChooser.getSelectedIndex()];
+                drawPanel.setGradientColor(shapeColor);
             }
         }
     }      

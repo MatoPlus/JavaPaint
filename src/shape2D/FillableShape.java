@@ -4,30 +4,30 @@ import java.awt.Color;
 
 
 /* Author: Ri Xin Yang
- * Date: April 19, 2018
+ * Date: July 9, 2018
  * Desc: Parent class of fillable shapes. Contain shape coordinates and basic shape properties. This class inherits 
  * from the Shape class.
  */
 public abstract class FillableShape extends Shape {
     
     // Instance variables
-    private boolean filled;
+    private boolean isFilled;
     
-    // Paratermized constructor. Receives x1, y1, x2, y2 as coordinates of diagonal end points. Further receives color
-    // and filled to initialize the line.
-    public FillableShape(int x1, int y1, int x2, int y2, Color color, boolean filled) {
-        super(x1, y1, x2, y2, color);
-        setFilled(filled);
+    // Paratermized constructor. Receives x1, y1, x2, y2 as coordinates of diagonal end points. Further receives color,
+    // gradient properties, and isFilled to initialize the line.
+    public FillableShape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, boolean isFilled) {
+        super(x1, y1, x2, y2, color, isGradient, gradientColor);
+        setIsFilled(isFilled);
     }
 
-    // accessor method for filled. Returns a boolean.
-    public boolean getFilled() {
-        return filled;
+    // accessor method for isFilled. Returns a boolean.
+    public boolean getIsFilled() {
+        return isFilled;
     }
     
-    // mutator method for filled. Receives a boolean for filled and set the filled as the argument passed in.
-    public void setFilled(boolean newFilled) {
-        filled = newFilled;
+    // mutator method for isFilled. Receives a boolean for isFilled and set the isFilled as the argument passed in.
+    public void setIsFilled(boolean isFilled) {
+        this.isFilled = isFilled;
     }
     
     // method for determining upper left X coordinate of rect on screen, return lowest value in int
@@ -61,6 +61,6 @@ public abstract class FillableShape extends Shape {
     // toString method, returns string of data that represents shape.
     @Override
     public String toString() {
-        return (super.toString()+", filled:"+filled);
+        return (super.toString()+", filled:"+isFilled);
     }    
 }

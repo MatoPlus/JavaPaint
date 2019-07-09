@@ -2,33 +2,55 @@ package shape2D;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GradientPaint;
 
 /*
  * Author: Ri Xin Yang
- * Date: April 19, 2018 
+ * Date: July 9, 2018 
  * Desc: Create a class containing propeties of a visual 2-D rectangle.This class extends from the FillableShape class
  */
 public class Rectangle extends FillableShape {
     
     // Paratermized constructor. Receives ints for x1, y1, x2, y2 as coordinates of diagonal end points. 
     // Further receives color as Color, and filled as boolean to initialize the rectangle. 
-    public Rectangle(int x1, int y1, int x2, int y2, Color color, boolean filled) {
-        super(x1, y1, x2, y2, color, filled);
+    public Rectangle(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, boolean isFilled) {
+        super(x1, y1, x2, y2, color, isGradient, gradientColor, isFilled);
     }
     
     @Override
     public void draw(Graphics g) {
 
-        // Set shape color.
-        g.setColor(getColor());
+        // Gradient drawing.
+        if (getIsGradient() == true) {
 
-        // Determine whether to draw a filled shape or the outline of the shape.
-        if (getFilled() == true) {
-            g.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-        } 
-        else {  
-            g.drawRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-        } 
+            // Create gradient.
+            Graphics2D g2 = (Graphics2D) g;
+            GradientPaint gradient = new GradientPaint(getX1(), getY1(), getColor(),
+            getX2(), getY2(), getGradientColor());
+            g2.setPaint(gradient);
+
+            // Determine whether to draw a filled shape or the outline of the shape.
+            if (getIsFilled() == true) {
+                g2.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+            } 
+            else {  
+                g2.drawRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+            } 
+        }
+        // Non-gradient drawing.
+        else {
+
+            // Set shape color.
+            g.setColor(getColor());
+
+            // Determine whether to draw a filled shape or the outline of the shape.
+            if (getIsFilled() == true) {
+                g.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+            } 
+            else {  
+                g.drawRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+            } 
+        }
     }
-    
 }

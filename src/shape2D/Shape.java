@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 /*
  * Author: Ri Xin Yang
- * Date: April 19, 2018 
+ * Date: July 9, 2018 
  * Desc: General, abstract shape class that includes basic properties of any shape in general - 1D and 2D properties.
  */
 public abstract class Shape {
@@ -16,15 +16,20 @@ public abstract class Shape {
     private int y1;
     private int y2;
     private Color color;
+    private boolean isGradient;
+    private Color gradientColor;
 
     // Parameterized constructor. Takes ints for x1, y1, x2, y2 as coordinates of diagonal endpoints.
-    // Also, a color argument as Color. These properties are used to initialize properties of the shape.
-    public Shape(int x1, int y1, int x2, int y2, Color color){
+    // Also, a color argument as Color. Following, isGradient and an gradient color is also used.
+    // These properties are used to initialize properties of the shape.
+    public Shape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor){
         setX1(x1);
         setY1(y1);
         setX2(x2);
         setY2(y2);
         setColor(color);
+        setIsGradient(isGradient);
+        setGradientColor(gradientColor);
     }
 
     // Accessor method for x1. Returns x1 as int.
@@ -109,12 +114,32 @@ public abstract class Shape {
         return color;
     }
 
+     //mutator method for isGradient. Receive boolean argument for isGradient, set argument as new isGradient.
+     public void setIsGradient(boolean isGradient) {
+        this.isGradient = isGradient;
+    }
+    
+    //accessor method for isGradient. Returns a boolean type.
+    public boolean getIsGradient() {
+        return isGradient;
+    }
+
+     //mutator method for gradient color. It sets the new color argument as new gradientColor.
+     public void setGradientColor(Color gradientColor) {
+        this.gradientColor = gradientColor;
+    }
+
+    //accessor method for color. Returns a Color type.
+    public Color getGradientColor() {
+        return gradientColor;
+    }
+
     // abstract method for drawing specific shapes.
     public abstract void draw(Graphics g);
     
     // toString method, returns string representing shape with properties.
     public String toString() {
-        return ("x1:"+x1+", y1:"+y1+", x2:"+x2+", y2:"+y2+", color:"+color);
+        return ("x1:"+x1+", y1:"+y1+", x2:"+x2+", y2:"+y2+", color:"+color+" isGradient:"+isGradient+" GradientColor:"+gradientColor);
     }    
 
 }   

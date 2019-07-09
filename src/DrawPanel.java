@@ -13,7 +13,7 @@ import shape2D.Shape;
 
 /*
  * Author: Ri Xin Yang
- * Date: April 19, 2019
+ * Date: July 9, 2019
  * This class is a JPanel that handles the drawing and handles the events made by the mouse.
  */
 public class DrawPanel extends JPanel {
@@ -23,8 +23,10 @@ public class DrawPanel extends JPanel {
     private static final int RECT_MODE = 1;
     private static final int OVAL_MODE = 2;
     private boolean isFilled;
-    private Color selectedColour;
-    private int selectedShapeMode;
+    private boolean isGradient;
+    private Color shapeColor;
+    private Color gradientColor;
+    private int shapeMode;
     private Shape currentShape;
     private JLabel statusBar;
     private LinkedList<Shape> shapes;
@@ -36,8 +38,10 @@ public class DrawPanel extends JPanel {
         // Initialize all the required objects for the panel.
         statusBar = statusLabel;
         isFilled = false;
-        selectedColour = Color.BLACK;
-        selectedShapeMode = LINE_MODE;
+        isGradient = false;
+        shapeColor = Color.BLACK;
+        gradientColor = Color.BLACK;
+        shapeMode = LINE_MODE;
         shapes = new LinkedList<>();
         redoStack = new DynamicStack<>();
         MouseEventListener drawPanelListener = new MouseEventListener(); 
@@ -83,18 +87,28 @@ public class DrawPanel extends JPanel {
     }
 
     // A setter for isFilled.
-    public void setIsFilled(boolean newBoolean) {
-        isFilled = newBoolean;
+    public void setIsFilled(boolean isFilled) {
+        this.isFilled = isFilled;
     }
 
-    // A setter for selectedColour.
-    public void setSelectedColour(Color newColour) {
-        selectedColour = newColour;
+    // A setter for isGradient.
+    public void setIsGradient(boolean isGradient) {
+        this.isGradient = isGradient;
     }
 
-    // A setter for selectedShapeMode.
-    public void setSelectedShapeMode(int newShapeMode) {
-        selectedShapeMode = newShapeMode;
+    // A setter for shapeColor.
+    public void setShapeColor(Color shapeColor) {
+        this.shapeColor = shapeColor;
+    }
+
+    // A setter for shapeMode.
+    public void setShapeMode(int shapeMode) {
+        this.shapeMode = shapeMode;
+    }
+
+    // A setter for gradientColor.
+    public void setGradientColor(Color gradientColor) {
+        this.gradientColor = gradientColor;
     }
 
     class MouseEventListener extends MouseAdapter {
@@ -103,14 +117,14 @@ public class DrawPanel extends JPanel {
         public void mousePressed(MouseEvent event) {
             
             // Decide which shape to draw depending on current shape type.
-            if (selectedShapeMode == LINE_MODE) {
-                currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), Color.LIGHT_GRAY);
+            if (shapeMode == LINE_MODE) {
+                currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor);
             }
-            else if (selectedShapeMode == RECT_MODE) {
-                currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), Color.LIGHT_GRAY, isFilled);
+            else if (shapeMode == RECT_MODE) {
+                currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, isFilled);
             }
-            else if (selectedShapeMode == OVAL_MODE) {
-                currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), Color.LIGHT_GRAY, isFilled);
+            else if (shapeMode == OVAL_MODE) {
+                currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, isFilled);
             }
             // Tell JVM to call paintComponent( g )
             repaint();
@@ -126,7 +140,7 @@ public class DrawPanel extends JPanel {
                 // Update ending coordinates and switch color to current selected color
                 currentShape.setX2(event.getX());
                 currentShape.setY2(event.getY());
-                currentShape.setColor(selectedColour);
+                currentShape.setColor(shapeColor);
 
                 // Add the new shape to linked list containing all shapes.
                 shapes.addLast(currentShape);
