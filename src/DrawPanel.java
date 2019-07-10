@@ -174,6 +174,12 @@ public class DrawPanel extends JPanel {
         public void mouseMoved(MouseEvent event) {
             statusBar.setText(String.format("(%d, %d)", event.getX(), event.getY()));
         } 
+
+        // handle event when mouse exits JPanel. Clear the status bar.
+         @Override
+         public void mouseExited( MouseEvent event ) {
+             statusBar.setText("(Mouse Outside)");
+        } 
     } 
     
     // This method is called automatically by the JVM when the window needs to be (re)drawn.
