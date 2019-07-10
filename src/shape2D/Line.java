@@ -9,7 +9,7 @@ import java.awt.BasicStroke;
 /*
  * Author: Ri Xin Yang
  * Date: July 9, 2018 
- * Desc: Create a class containing propeties of a visual 2-D line.This class inherits from the Shape class
+ * Desc: Create a class containing properties of a visual 2-D line.This class inherits from the Shape class
  */
 public class Line extends Shape {
     
@@ -23,11 +23,11 @@ public class Line extends Shape {
     @Override
     public void draw(Graphics g) {
 
-        // Uses Graphics2D instead of Graphics for more relevant properties.
-        Graphics2D g2 = (Graphics2D) g;
+        // Creates a copy of the Graphics instance with Graphics2D.
+        Graphics2D g2d = (Graphics2D) g.create();
 
         // Set stroke/line width.
-        g2.setStroke(new BasicStroke(getLineWidth()));
+        g2d.setStroke(new BasicStroke(getLineWidth()));
 
         // Gradient drawing.
         if (getIsGradient() == true) {
@@ -35,17 +35,20 @@ public class Line extends Shape {
             // Create gradient.
             GradientPaint gradient = new GradientPaint(getX1(), getY1(), getColor(),
                 getX2(), getY2(), getGradientColor());
-            g2.setPaint(gradient);
+            g2d.setPaint(gradient);
 
-            // Draw shape with gradient.
-            g2.drawLine(getX1(), getY1(), getX2(), getY2());
         }
         // Non-gradient drawing.
         else {
             // Set color and draw line.
-            g.setColor(getColor());
-            g.drawLine(getX1(), getY1(), getX2(), getY2());  
+            g2d.setColor(getColor());
         }  
+
+        // Draw shape with gradient.
+        g2d.drawLine(getX1(), getY1(), getX2(), getY2());
+        
+        // Gets rid of the copy.
+        g2d.dispose();
     }
     
 }

@@ -23,41 +23,34 @@ public class Oval extends FillableShape{
     @Override
     public void draw(Graphics g) {
 
-        // Uses Graphics2D instead of Graphics for more relevant properties.
-        Graphics2D g2 = (Graphics2D) g;
+        // Creates a copy of the Graphics instance with Graphics2D.
+        Graphics2D g2d = (Graphics2D) g.create();
 
         // Set stroke/line width.
-        g2.setStroke(new BasicStroke(getLineWidth()));
+        g2d.setStroke(new BasicStroke(getLineWidth()));
 
         // Gradient drawing.
         if (getIsGradient() == true) {
-
             // Create gradient.
             GradientPaint gradient = new GradientPaint(getX1(), getY1(), getColor(),
             getX2(), getY2(), getGradientColor());
-            g2.setPaint(gradient);
-
-            // Determine whether to draw a filled shape or the outline of the shape.
-            if (getIsFilled() == true) {
-               g2.fillOval(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-            } 
-            else {  
-                g2.drawOval(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-            } 
+            g2d.setPaint(gradient);
         }
         // Non-gradient drawing.
         else {
-
             // Set color
-            g2.setColor(getColor());
-
-            // Determine whether to draw a filled shape or the outline of the shape.
-            if (getIsFilled() == true) {
-                g2.fillOval(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-            } 
-            else {  
-                g2.drawOval(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-            } 
+            g2d.setColor(getColor());
         }
+
+        // Determine whether to draw a filled shape or the outline of the shape.
+        if (getIsFilled() == true) {
+            g2d.fillOval(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+        } 
+        else {  
+            g2d.drawOval(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+        } 
+
+        // Gets rid of the copy.
+        g2d.dispose();
     }
 }
