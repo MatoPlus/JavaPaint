@@ -18,11 +18,12 @@ public abstract class Shape {
     private Color color;
     private boolean isGradient;
     private Color gradientColor;
+    private int lineWidth;
 
     // Parameterized constructor. Takes ints for x1, y1, x2, y2 as coordinates of diagonal endpoints.
-    // Also, a color argument as Color. Following, isGradient and an gradient color is also used.
+    // Also, a color argument and all the remaining arguments is used to define the properties of the shape.
     // These properties are used to initialize properties of the shape.
-    public Shape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor){
+    public Shape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth){
         setX1(x1);
         setY1(y1);
         setX2(x2);
@@ -30,6 +31,7 @@ public abstract class Shape {
         setColor(color);
         setIsGradient(isGradient);
         setGradientColor(gradientColor);
+        setLineWidth(lineWidth);
     }
 
     // Accessor method for x1. Returns x1 as int.
@@ -52,7 +54,7 @@ public abstract class Shape {
         return y2;
     }
 
-    // Mutator method for x1. Receive arugument for newX as int, do validation and set value if valid.
+    // Mutator method for x1. Receive argument for newX as int, do validation and set value if valid.
     public void setX1(int newX) {
 
         // Sanity checking for non-negative values
@@ -65,10 +67,10 @@ public abstract class Shape {
         }
     }
 
-    // Mutator method for y1. Receive arugument for newY as int, do validation and set value if valid.
+    // Mutator method for y1. Receive argument for newY as int, do validation and set value if valid.
     public void setY1(int newY) {
 
-        //sanity checking for non-negative values
+        // Sanity checking for non-negative values
         if (newY >= 0) {
             y1 = newY;
         }
@@ -78,10 +80,10 @@ public abstract class Shape {
         }
     }
 
-    // Mutator method for x2. Receive arugument for newX as int, do validation and set value if valid.
+    // Mutator method for x2. Receive argument for newX as int, do validation and set value if valid.
     public void setX2(int newX) {
 
-        //sanity checking for non-negative values
+        //Sanity checking for non-negative values
         if (newX >= 0) {
             x2 = newX;
         }
@@ -91,10 +93,10 @@ public abstract class Shape {
         }
     }
 
-    // Mutator method for y2. Receive arugument for newY as int, do validation and set value if valid.
+    // Mutator method for y2. Receive argument for newY as int, do validation and set value if valid.
     public void setY2(int newY) {
 
-        //sanity checking for non-negative values
+        // Sanity checking for non-negative values
         if (newY >= 0) {
             y2 = newY;
         }
@@ -104,37 +106,47 @@ public abstract class Shape {
         }
     }
 
-    //mutator method for color. Receive argument for color as Color, set argument as new color.
+    // Mutator method for color. Receive argument for color as Color, set argument as new color.
     public void setColor(Color color) {
         this.color = color;
     }
     
-    //accessor method for color. Returns a Color type.
+    // Accessor method for color. Returns a Color type.
     public Color getColor() {
         return color;
     }
 
-     //mutator method for isGradient. Receive boolean argument for isGradient, set argument as new isGradient.
-     public void setIsGradient(boolean isGradient) {
+    // Mutator method for isGradient. Receive boolean argument for isGradient, set argument as new isGradient.
+    public void setIsGradient(boolean isGradient) {
         this.isGradient = isGradient;
     }
     
-    //accessor method for isGradient. Returns a boolean type.
+    // Accessor method for isGradient. Returns a boolean type.
     public boolean getIsGradient() {
         return isGradient;
     }
 
-     //mutator method for gradient color. It sets the new color argument as new gradientColor.
+    // Mutator method for gradient color. It sets the new color argument as new gradientColor.
      public void setGradientColor(Color gradientColor) {
         this.gradientColor = gradientColor;
     }
 
-    //accessor method for color. Returns a Color type.
+    // Accessor method for gradient color. Returns a Color type.
     public Color getGradientColor() {
         return gradientColor;
     }
 
-    // abstract method for drawing specific shapes.
+    // Mutator method for line width. It sets the new int argument as new lineWidth;
+    public void setLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
+    // Accessor method for line width. Returns a int type.
+    public int getLineWidth() {
+        return lineWidth;
+    }
+
+    // Abstract method for drawing specific shapes.
     public abstract void draw(Graphics g);
     
     // toString method, returns string representing shape with properties.

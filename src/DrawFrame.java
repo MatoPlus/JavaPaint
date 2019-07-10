@@ -1,11 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.NumberFormat;
+import javax.swing.text.NumberFormatter;
+import javax.swing.JFormattedTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -13,6 +15,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 /*
  * Author: Ri Xin Yang
@@ -23,6 +27,7 @@ public class DrawFrame extends JFrame {
 
     // Declaration of required variables for the draw frame.
     private static final int LINE_MODE = 0;
+    private static final int MAX_ROW_COUNT = 13;
     private JLabel statusBar; 
     private DrawPanel drawPanel;
     private String[] colorNames = {"Black", "White", "Red", "Green","Blue", "Cyan", "Pink", "Yellow", "Magenta", "Orange", "Gray"};
@@ -32,14 +37,17 @@ public class DrawFrame extends JFrame {
     private JComboBox<String> colorChooser;
     private JComboBox<String> gradientChooser;
     private JComboBox<String> shapeChooser;
+    private JFormattedTextField lineWidthTextField;
     private JButton undoButton;
     private JButton redoButton;
     private JButton clearButton;
     private JPanel interactionPanel;
     private JCheckBox fillBox;
     private JCheckBox gradientBox;
+    private JLabel lineWidthPrompt;
     private Color shapeColor;
     private int shapeMode;
+    private int lineWidth;
 
     // A constructor that creates the frame for display.
     public DrawFrame() {
@@ -61,22 +69,34 @@ public class DrawFrame extends JFrame {
         colorChooser = new JComboBox<String>(colorNames);
         gradientChooser = new JComboBox<String>(colorNames);
         shapeChooser = new JComboBox<String>(shapeNames);
-        ActionListener eventListener = new ButtonEventListener();
+        ActionListener buttonListener = new ButtonEventListener();
+        PropertyChangeListener textListener = new TextChangeListener();
         ItemListener comboBoxListener = new ComboBoxEventListener();
         ItemListener checkBoxListener = new CheckBoxEventListener();
+        lineWidthPrompt = new JLabel("Line Width:");
 
+        // Set up formatter for text fields
+        NumberFormat inputFormat = NumberFormat.getInstance();
+        NumberFormatter inputFormatter = new NumberFormatter(inputFormat);
+        inputFormatter.setValueClass(Integer.class);
+        inputFormatter.setMinimum(1);
+        inputFormatter.setMaximum(300);
+        inputFormatter.setCommitsOnValidEdit(true);
+
+        // Initiate text field.
+        lineWidthTextField = new JFormattedTextField(inputFormatter);
+        lineWidthTextField.setValue(1);
 
         // associate buttons with eventListener
-        undoButton.addActionListener(eventListener);
-        redoButton.addActionListener(eventListener);
-        clearButton.addActionListener(eventListener);
+        undoButton.addActionListener(buttonListener);
+        redoButton.addActionListener(buttonListener);
+        clearButton.addActionListener(buttonListener);
+        lineWidthTextField.addPropertyChangeListener(textListener);
 
         // Set JComboBox events and properties 
-        colorChooser.setMaximumRowCount(11);  
-        gradientChooser.setMaximumRowCount(11);  
-        shapeChooser.setMaximumRowCount(3);    
-        shapeChooser.setPreferredSize(new Dimension(5,5));
-        shapeChooser.setPreferredSize(new Dimension(5,5));
+        colorChooser.setMaximumRowCount(MAX_ROW_COUNT);  
+        gradientChooser.setMaximumRowCount(MAX_ROW_COUNT);  
+        shapeChooser.setMaximumRowCount(MAX_ROW_COUNT);  
         colorChooser.addItemListener(comboBoxListener);
         gradientChooser.addItemListener(comboBoxListener);
         shapeChooser.addItemListener(comboBoxListener);
@@ -100,6 +120,8 @@ public class DrawFrame extends JFrame {
         interactionPanel.add(fillBox); 
         interactionPanel.add(gradientBox);
         interactionPanel.add(gradientChooser);
+        interactionPanel.add(lineWidthPrompt);
+        interactionPanel.add(lineWidthTextField);
 
         // Append interactions panel to main panel.
         add(interactionPanel, BorderLayout.NORTH);
@@ -110,7 +132,7 @@ public class DrawFrame extends JFrame {
 
     } 
 
-    // Inner class for event handling
+    // Inner class for button event handling
     class ButtonEventListener implements ActionListener {
         // The ActionListener interface requires that we override the actionPerformed() method.
         // This method will be called automatically whenever a button event occurs.
@@ -134,7 +156,24 @@ public class DrawFrame extends JFrame {
 
         }
     }
-    
+
+     // Inner class for text input change handling
+     class TextChangeListener implements PropertyChangeListener {
+        // The ActionListener interface requires that we override the actionPerformed() method.
+        // This method will be called automatically whenever a button event occurs.
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            // The ActionEvent getSource() method returns a reference to the button widget that was clicked.
+            // This allows us to use one event listener for more than one JButton, if desired.
+
+            if (e.getSource() == lineWidthTextField) {
+                lineWidth = (Integer)(lineWidthTextField.getValue());
+                drawPanel.setLineWidth(lineWidth);
+            } 
+            
+        }
+    }
+
     // Inner class for handling events on lockBox (JCheckBox)
     class CheckBoxEventListener implements ItemListener {
         // Override the itemStateChanged() method as required by the ActionListener Interface
@@ -143,9 +182,11 @@ public class DrawFrame extends JFrame {
             // Determine the isFilled flag with the check box. Change the flag accordingly.
             if (fillBox.isSelected()) {
                 drawPanel.setIsFilled(true);
+                lineWidthTextField.setEnabled(false);
             } 
             else {
                 drawPanel.setIsFilled(false);
+                lineWidthTextField.setEnabled(true);
             }
 
             if (gradientBox.isSelected()) {

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GradientPaint;
+import java.awt.BasicStroke;
 
 /*
  * Author: Ri Xin Yang
@@ -14,19 +15,24 @@ public class Line extends Shape {
     
     // Paratermized constructor. Receives ints for x1, y1, x2, y2 as coordinates of diagonal end points.
     // Further receives color and gradient properties to initialize line.
-    public Line(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor);
+    public Line(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth) {
+        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth);
     }
     
     // Determine how to draw graphic when called.
     @Override
     public void draw(Graphics g) {
 
+        // Uses Graphics2D instead of Graphics for more relevant properties.
+        Graphics2D g2 = (Graphics2D) g;
+
+        // Set stroke/line width.
+        g2.setStroke(new BasicStroke(getLineWidth()));
+
         // Gradient drawing.
         if (getIsGradient() == true) {
 
             // Create gradient.
-            Graphics2D g2 = (Graphics2D) g;
             GradientPaint gradient = new GradientPaint(getX1(), getY1(), getColor(),
                 getX2(), getY2(), getGradientColor());
             g2.setPaint(gradient);

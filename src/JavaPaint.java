@@ -14,7 +14,7 @@ public class JavaPaint{
         DrawFrame appWindow = new DrawFrame();
         
         // Initiate appWindow properties                          
-        appWindow.setSize(800, 600);
+        appWindow.setSize(1000, 600);
         appWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appWindow.setVisible(true);
     }    

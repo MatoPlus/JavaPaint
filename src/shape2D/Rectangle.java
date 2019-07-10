@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GradientPaint;
+import java.awt.BasicStroke;
 
 /*
  * Author: Ri Xin Yang
@@ -14,18 +15,23 @@ public class Rectangle extends FillableShape {
     
     // Paratermized constructor. Receives ints for x1, y1, x2, y2 as coordinates of diagonal end points. 
     // Further receives color as Color, and filled as boolean to initialize the rectangle. 
-    public Rectangle(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, boolean isFilled) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor, isFilled);
+    public Rectangle(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isFilled) {
+        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth, isFilled);
     }
     
     @Override
     public void draw(Graphics g) {
 
+        // Uses Graphics2D instead of Graphics for more relevant properties.
+        Graphics2D g2 = (Graphics2D) g;
+
+        // Set stroke/line width.
+        g2.setStroke(new BasicStroke(getLineWidth()));
+
         // Gradient drawing.
         if (getIsGradient() == true) {
 
             // Create gradient.
-            Graphics2D g2 = (Graphics2D) g;
             GradientPaint gradient = new GradientPaint(getX1(), getY1(), getColor(),
             getX2(), getY2(), getGradientColor());
             g2.setPaint(gradient);
@@ -42,14 +48,14 @@ public class Rectangle extends FillableShape {
         else {
 
             // Set shape color.
-            g.setColor(getColor());
+            g2.setColor(getColor());
 
             // Determine whether to draw a filled shape or the outline of the shape.
             if (getIsFilled() == true) {
-                g.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+                g2.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
             } 
             else {  
-                g.drawRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+                g2.drawRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
             } 
         }
     }

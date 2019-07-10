@@ -15,8 +15,8 @@ public abstract class FillableShape extends Shape {
     
     // Paratermized constructor. Receives x1, y1, x2, y2 as coordinates of diagonal end points. Further receives color,
     // gradient properties, and isFilled to initialize the line.
-    public FillableShape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, boolean isFilled) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor);
+    public FillableShape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isFilled) {
+        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth);
         setIsFilled(isFilled);
     }
 

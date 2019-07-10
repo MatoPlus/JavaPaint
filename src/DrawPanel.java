@@ -27,6 +27,7 @@ public class DrawPanel extends JPanel {
     private Color shapeColor;
     private Color gradientColor;
     private int shapeMode;
+    private int lineWidth;
     private Shape currentShape;
     private JLabel statusBar;
     private LinkedList<Shape> shapes;
@@ -42,6 +43,7 @@ public class DrawPanel extends JPanel {
         shapeColor = Color.BLACK;
         gradientColor = Color.BLACK;
         shapeMode = LINE_MODE;
+        lineWidth = 1;
         shapes = new LinkedList<>();
         redoStack = new DynamicStack<>();
         MouseEventListener drawPanelListener = new MouseEventListener(); 
@@ -111,6 +113,11 @@ public class DrawPanel extends JPanel {
         this.gradientColor = gradientColor;
     }
 
+    // A setter for lineWidth.
+    public void setLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
     class MouseEventListener extends MouseAdapter {
         // Mouse press indicates a new shape drawing has been started
         @Override
@@ -118,13 +125,13 @@ public class DrawPanel extends JPanel {
             
             // Decide which shape to draw depending on current shape type.
             if (shapeMode == LINE_MODE) {
-                currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor);
+                currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth);
             }
             else if (shapeMode == RECT_MODE) {
-                currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, isFilled);
+                currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isFilled);
             }
             else if (shapeMode == OVAL_MODE) {
-                currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, isFilled);
+                currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isFilled);
             }
             // Tell JVM to call paintComponent( g )
             repaint();
