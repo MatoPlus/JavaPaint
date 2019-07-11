@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import shape2D.Line;
 import shape2D.Oval;
 import shape2D.Rectangle;
@@ -54,7 +55,6 @@ public class DrawPanel extends JPanel {
 
         // Initiate color of background.
         setBackground(Color.WHITE); 
-
     }
 
     // Remove the latest action from drawn shapes, add it to the redo stack.
@@ -123,18 +123,22 @@ public class DrawPanel extends JPanel {
         @Override
         public void mousePressed(MouseEvent event) {
             
-            // Decide which shape to draw depending on current shape type.
-            if (shapeMode == LINE_MODE) {
-                currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth);
+            // Make sure command is from left clicks only to avoid call exceptions.
+            if (! (SwingUtilities.isRightMouseButton(event) || SwingUtilities.isMiddleMouseButton(event))) {
+
+                // Decide which shape to draw depending on current shape type.
+                if (shapeMode == LINE_MODE) {
+                    currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth);
+                }
+                else if (shapeMode == RECT_MODE) {
+                    currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isFilled);
+                }
+                else if (shapeMode == OVAL_MODE) {
+                    currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isFilled);
+                }
+                // Tell JVM to call paintComponent( g )
+                repaint();
             }
-            else if (shapeMode == RECT_MODE) {
-                currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isFilled);
-            }
-            else if (shapeMode == OVAL_MODE) {
-                currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isFilled);
-            }
-            // Tell JVM to call paintComponent( g )
-            repaint();
         } 
         
         // Mouse release indicates the new shape is finished
@@ -142,7 +146,7 @@ public class DrawPanel extends JPanel {
         public void mouseReleased(MouseEvent event) {
 
             // Make sure command is from left clicks only to avoid call exceptions.
-            if (! (event.isMetaDown() || event.isAltDown())) {
+            if (! (SwingUtilities.isRightMouseButton(event) || SwingUtilities.isMiddleMouseButton(event))) {
                 
                 // Update ending coordinates and switch color to current selected color
                 currentShape.setX2(event.getX());
@@ -168,7 +172,8 @@ public class DrawPanel extends JPanel {
         public void mouseDragged(MouseEvent event) {
                 
             // Make sure command is for left click only to avoid call exceptions.
-            if (! (event.isMetaDown() || event.isAltDown())) {
+            if (! (SwingUtilities.isRightMouseButton(event) || SwingUtilities.isMiddleMouseButton(event))) {
+
                 currentShape.setX2(event.getX());
                 currentShape.setY2(event.getY());
                 statusBar.setText(String.format("(%d, %d)", event.getX(), event.getY()));

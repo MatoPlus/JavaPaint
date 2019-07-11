@@ -57,6 +57,7 @@ public class DrawFrame extends JFrame {
 
         // Initialize objects used to create panel.
         statusBar = new JLabel();
+
         drawPanel = new DrawPanel(statusBar);
 
         // Initialize all the required objects for the frame.
@@ -105,7 +106,7 @@ public class DrawFrame extends JFrame {
         fillBox.addItemListener(checkBoxListener);
         gradientBox.addItemListener(checkBoxListener);
 
-        // Setting additional default properties.
+        // Setting default enabled properties.
         gradientChooser.setEnabled(false);
         fillBox.setEnabled(false);
 
