@@ -17,5 +17,4 @@ A Painting/Drawing Program written in Java.
 - The constructors for the shape classes are too long. Shorter alternatives will be added.
 
 # Known Bugs
-- Right/middle clicks causes NullPointerException. This is a low priority bug since it does not crash the program. 
 - TextFields allows non-integer inputs.
