@@ -15,8 +15,8 @@ public class Line extends Shape {
     
     // Paratermized constructor. Receives ints for x1, y1, x2, y2 as coordinates of diagonal end points.
     // Further receives color and gradient properties to initialize line.
-    public Line(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth);
+    public Line(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isDashed, int dashLength) {
+        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth, isDashed, dashLength);
     }
     
     // Determine how to draw graphic when called.
@@ -26,8 +26,13 @@ public class Line extends Shape {
         // Creates a copy of the Graphics instance with Graphics2D.
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // Set stroke/line width.
-        g2d.setStroke(new BasicStroke(getLineWidth()));
+        // Set stroke/line width based on if lines are dashed.
+        if (getIsDashed()) {
+            g2d.setStroke(new BasicStroke(getLineWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 1, new float[]{getDashLength()}, 0));
+        }
+        else {
+            g2d.setStroke(new BasicStroke(getLineWidth()));
+        }
 
         // Gradient drawing.
         if (getIsGradient() == true) {

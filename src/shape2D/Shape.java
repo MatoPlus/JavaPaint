@@ -19,11 +19,13 @@ public abstract class Shape {
     private boolean isGradient;
     private Color gradientColor;
     private int lineWidth;
+    private boolean isDashed;
+    private int dashLength;
 
     // Parameterized constructor. Takes ints for x1, y1, x2, y2 as coordinates of diagonal endpoints.
     // Also, a color argument and all the remaining arguments is used to define the properties of the shape.
     // These properties are used to initialize properties of the shape.
-    public Shape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth){
+    public Shape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isDashed, int dashLength) {
         setX1(x1);
         setY1(y1);
         setX2(x2);
@@ -32,6 +34,8 @@ public abstract class Shape {
         setIsGradient(isGradient);
         setGradientColor(gradientColor);
         setLineWidth(lineWidth);
+        setIsDashed(isDashed);
+        setDashLength(dashLength);
     }
 
     // Accessor method for x1. Returns x1 as int.
@@ -146,12 +150,33 @@ public abstract class Shape {
         return lineWidth;
     }
 
+    // Mutator method for isDashed. It sets the new boolean argument as new dashLength;
+    public void setIsDashed(boolean isDashed) {
+        this.isDashed = isDashed;
+    }
+
+    // Accessor method for isDashed. Returns a boolean type.
+    public boolean getIsDashed() {
+        return isDashed;
+    }
+
+    // Mutator method for dash length. It sets the new int argument as new dashLength;
+    public void setDashLength(int dashLength) {
+        this.dashLength = dashLength;
+    }
+
+    // Accessor method for dash length. Returns a int type.
+    public int getDashLength() {
+        return dashLength;
+    }
+
     // Abstract method for drawing specific shapes.
     public abstract void draw(Graphics g);
     
     // toString method, returns string representing shape with properties.
     public String toString() {
-        return ("x1:"+x1+", y1:"+y1+", x2:"+x2+", y2:"+y2+", color:"+color+" isGradient:"+isGradient+" GradientColor:"+gradientColor);
+        return ("x1:"+x1+", y1:"+y1+", x2:"+x2+", y2:"+y2+", color:"+color+" isGradient:"+isGradient+
+        " GradientColor:"+gradientColor+" lineWidth:"+lineWidth+" isDashed:"+isDashed+" dashLength:"+dashLength);
     }    
 
 }   

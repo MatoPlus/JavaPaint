@@ -38,16 +38,19 @@ public class DrawFrame extends JFrame {
     private JComboBox<String> gradientChooser;
     private JComboBox<String> shapeChooser;
     private JFormattedTextField lineWidthTextField;
+    private JFormattedTextField dashLengthTextField;
     private JButton undoButton;
     private JButton redoButton;
     private JButton clearButton;
     private JPanel interactionPanel;
     private JCheckBox fillBox;
     private JCheckBox gradientBox;
+    private JCheckBox dashBox;
     private JLabel lineWidthPrompt;
     private Color shapeColor;
     private int shapeMode;
     private int lineWidth;
+    private int dashLength;
 
     // A constructor that creates the frame for display.
     public DrawFrame() {
@@ -65,6 +68,7 @@ public class DrawFrame extends JFrame {
         clearButton = new JButton("Clear");
         fillBox = new JCheckBox("Filled");
         gradientBox = new JCheckBox("Gradient");
+        dashBox = new JCheckBox("Dashed");
         redoButton = new JButton("Redo");
         undoButton = new JButton("Undo");
         colorChooser = new JComboBox<String>(colorNames);
@@ -88,11 +92,17 @@ public class DrawFrame extends JFrame {
         lineWidthTextField = new JFormattedTextField(inputFormatter);
         lineWidthTextField.setValue(1);
 
+        dashLengthTextField = new JFormattedTextField(inputFormatter);
+        dashLengthTextField.setValue(1);
+
         // associate buttons with eventListener
         undoButton.addActionListener(buttonListener);
         redoButton.addActionListener(buttonListener);
         clearButton.addActionListener(buttonListener);
+
+        // Asscociate textfields with property change listeners.
         lineWidthTextField.addPropertyChangeListener(textListener);
+        dashLengthTextField.addPropertyChangeListener(textListener);
 
         // Set JComboBox events and properties 
         colorChooser.setMaximumRowCount(MAX_ROW_COUNT);  
@@ -105,13 +115,15 @@ public class DrawFrame extends JFrame {
         // Check box events.
         fillBox.addItemListener(checkBoxListener);
         gradientBox.addItemListener(checkBoxListener);
+        dashBox.addItemListener(checkBoxListener);
 
         // Setting default enabled properties.
         gradientChooser.setEnabled(false);
         fillBox.setEnabled(false);
+        dashLengthTextField.setEnabled(false);
 
         // Set layout and overall set up of interactionPanel.
-        interactionPanel.setLayout(new GridLayout(1, 7, 10, 10));
+        interactionPanel.setLayout(new GridLayout(1, 12, 10, 10));
         interactionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         interactionPanel.add(undoButton);
         interactionPanel.add(redoButton);
@@ -123,6 +135,8 @@ public class DrawFrame extends JFrame {
         interactionPanel.add(gradientChooser);
         interactionPanel.add(lineWidthPrompt);
         interactionPanel.add(lineWidthTextField);
+        interactionPanel.add(dashBox);
+        interactionPanel.add(dashLengthTextField);
 
         // Append interactions panel to main panel.
         add(interactionPanel, BorderLayout.NORTH);
@@ -171,6 +185,10 @@ public class DrawFrame extends JFrame {
                 lineWidth = (Integer)(lineWidthTextField.getValue());
                 drawPanel.setLineWidth(lineWidth);
             } 
+            else if (e.getSource() == dashLengthTextField) {
+                dashLength = (Integer)(dashLengthTextField.getValue());
+                drawPanel.setDashLength(dashLength);
+            } 
             
         }
     }
@@ -184,10 +202,14 @@ public class DrawFrame extends JFrame {
             if (fillBox.isSelected()) {
                 drawPanel.setIsFilled(true);
                 lineWidthTextField.setEnabled(false);
+                dashLengthTextField.setEnabled(false);
+                dashBox.setEnabled(false);
             } 
             else {
                 drawPanel.setIsFilled(false);
                 lineWidthTextField.setEnabled(true);
+                dashLengthTextField.setEnabled(true);
+                dashBox.setEnabled(true);
             }
 
             if (gradientBox.isSelected()) {
@@ -198,6 +220,17 @@ public class DrawFrame extends JFrame {
                 drawPanel.setIsGradient(false);
                 gradientChooser.setEnabled(false);
             }
+
+            if (dashBox.isSelected()) {
+                drawPanel.setIsDashed(true);
+                dashLengthTextField.setEnabled(true);
+            }
+            else {
+                drawPanel.setIsDashed(false);
+                dashLengthTextField.setEnabled(false);
+            }
+
+
         }         
     }
 
