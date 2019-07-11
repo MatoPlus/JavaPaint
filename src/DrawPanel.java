@@ -136,7 +136,7 @@ public class DrawPanel extends JPanel {
         public void mousePressed(MouseEvent event) {
             
             // Make sure command is from left clicks only to avoid call exceptions.
-            if (! (SwingUtilities.isRightMouseButton(event) || SwingUtilities.isMiddleMouseButton(event))) {
+            if (SwingUtilities.isLeftMouseButton(event)) {
 
                 // Decide which shape to draw depending on current shape type.
                 if (shapeMode == LINE_MODE) {
@@ -157,9 +157,17 @@ public class DrawPanel extends JPanel {
         @Override
         public void mouseReleased(MouseEvent event) {
 
+            if (SwingUtilities.isRightMouseButton(event)) {
+
+                // Cancel current drawing.
+                currentShape = null;
+
+                // Update panel.
+                repaint();
+            }
             // Make sure command is from left clicks only to avoid call exceptions.
-            if (! (SwingUtilities.isRightMouseButton(event) || SwingUtilities.isMiddleMouseButton(event))) {
-                
+            else if (SwingUtilities.isLeftMouseButton(event) && currentShape != null) {
+
                 // Update ending coordinates and switch color to current selected color
                 currentShape.setX2(event.getX());
                 currentShape.setY2(event.getY());
@@ -182,15 +190,14 @@ public class DrawPanel extends JPanel {
         // As mouse is dragged, update ending coordinates of currentShape and statusBar
         @Override
         public void mouseDragged(MouseEvent event) {
-                
-            // Make sure command is for left click only to avoid call exceptions.
-            if (! (SwingUtilities.isRightMouseButton(event) || SwingUtilities.isMiddleMouseButton(event))) {
-
+            
+            if (currentShape != null) {
                 currentShape.setX2(event.getX());
                 currentShape.setY2(event.getY());
-                statusBar.setText(String.format("(%d, %d)", event.getX(), event.getY()));
                 repaint();
             }
+
+            statusBar.setText(String.format("(%d, %d)", event.getX(), event.getY()));
         } 
         
         // As mouse is moved, just update the statusBar
