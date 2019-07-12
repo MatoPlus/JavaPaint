@@ -1,0 +1,8 @@
+dashed: false
+filled: false
+gradient: false
+shape_type: Line
+primary_color: Black
+gradient_color: Black
+line_width: 1
+dash_length: 1
