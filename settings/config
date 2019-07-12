@@ -1,8 +1,16 @@
+#This is the default preference config. It will be loaded on startup.
+
 dashed: false
 filled: false
 gradient: false
-shape_type: Line
+
+# 0 for line, 1 for rectangles, and 2 for ovals.
+shape_mode: 0
+
+# choose colors from black, white, red, green, blue, cyan, pink, yellow, magenta, orange, and gray
 primary_color: Black
 gradient_color: Black
+
 line_width: 1
 dash_length: 1
+
