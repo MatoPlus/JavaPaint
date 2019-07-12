@@ -12,6 +12,8 @@ A Painting/Drawing Program written in Java.
 - Ability to choose shapes dynamically for drawing.
 - Ability to choose drawing properties such as colors, filled, gradient colors, line width, and dashed-lines  dynamically.
 - A statusbar with the current mouse position.
+- Menubar with options like 'About', 'Preferences', and 'Exit'.
+- Robust config file for default preferences.
 
 # To Be Implemented
 - The constructors for the shape classes are too long. Shorter alternatives will be added.
