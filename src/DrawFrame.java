@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 /*
  * Author: Ri Xin Yang
@@ -61,7 +62,7 @@ public class DrawFrame extends JFrame {
     private JMenuItem aboutItem;
     private JMenuItem prefItem;
     private JMenuItem exitItem;
-    private Color shapeColor;
+    private int shapeColorIndex;
     private int shapeMode;
     private int lineWidth;
     private int dashLength;
@@ -189,6 +190,9 @@ public class DrawFrame extends JFrame {
         add(statusBar, BorderLayout.SOUTH);
         add(drawPanel, BorderLayout.CENTER);
 
+        // Optional config loading.
+        loadDefaultPreferences();
+
     }
 
     // Inner class for button event handling
@@ -234,16 +238,17 @@ public class DrawFrame extends JFrame {
 
             // Show information about the program on called.
             if (e.getSource() == prefItem) {
-          
-                int result = JOptionPane.showConfirmDialog(null, getPrefPanel(), 
-                         "Preferences: Default Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 
+                // Get result back from preference dialog.
+                int result = JOptionPane.showConfirmDialog(null, getPrefPanel(), "Preferences: Default Settings",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
+
+                // If users has sent their inputs, use them to write down the config.
                 if (result == JOptionPane.OK_OPTION) {
                     writeDefaultPreferences();
                 }
-                
-            }
-            else if (e.getSource() == aboutItem) {
+
+            } else if (e.getSource() == aboutItem) {
 
                 // Show about dialog via JOptionPane.
                 JOptionPane.showMessageDialog(null, getAboutPanel(), "About", JOptionPane.PLAIN_MESSAGE, null);
@@ -271,12 +276,12 @@ public class DrawFrame extends JFrame {
             // Change lineWidth on detection.
             if (e.getSource() == lineWidthTextField) {
                 lineWidth = (Integer) (lineWidthTextField.getValue());
-                drawPanel.setLineWidth(lineWidth);
+                setLineWidthTextField(lineWidth);
             }
             // Change dashLength on detection.
             else if (e.getSource() == dashLengthTextField) {
                 dashLength = (Integer) (dashLengthTextField.getValue());
-                drawPanel.setDashLength(dashLength);
+                setDashLengthTextField(dashLength);
             }
 
         }
@@ -288,35 +293,25 @@ public class DrawFrame extends JFrame {
         // Interface
         @Override
         public void itemStateChanged(ItemEvent e) {
-            // Determine the isFilled flag with the check box. Change the flag accordingly.
+            // Determine the isFilled flag with the check box. Change a set of flags accordingly.
             if (fillBox.isSelected()) {
-                drawPanel.setIsFilled(true);
-                lineWidthTextField.setEnabled(false);
-                dashLengthTextField.setEnabled(false);
-                dashBox.setEnabled(false);
+                setFillBox(true);
             } else {
-                drawPanel.setIsFilled(false);
-                lineWidthTextField.setEnabled(true);
-                dashLengthTextField.setEnabled(true);
-                dashBox.setEnabled(true);
+                setFillBox(false);
             }
 
-            // Determine the isGradient flag with the check box. Change flag accordingly.
+            // Determine the isGradient flag with the check box. Change a set of flags accordingly.
             if (gradientBox.isSelected()) {
-                drawPanel.setIsGradient(true);
-                gradientChooser.setEnabled(true);
+                setGradientBox(true);
             } else {
-                drawPanel.setIsGradient(false);
-                gradientChooser.setEnabled(false);
+                setGradientBox(false);
             }
 
-            // Determine the isDashed flag with the check box. Change flag accordingly.
+            // Determine the isDashed flag with the check box. Change a set of flags accordingly.
             if (dashBox.isSelected()) {
-                drawPanel.setIsDashed(true);
-                dashLengthTextField.setEnabled(true);
+                setDashBox(true);
             } else {
-                drawPanel.setIsDashed(false);
-                dashLengthTextField.setEnabled(false);
+                setDashBox(false);
             }
 
         }
@@ -330,30 +325,21 @@ public class DrawFrame extends JFrame {
         public void itemStateChanged(ItemEvent e) {
             // Change shapeColor depending on user selection.
             if (e.getSource() == colorChooser) {
-                shapeColor = colorValues[colorChooser.getSelectedIndex()];
-                drawPanel.setShapeColor(shapeColor);
+                shapeColorIndex = colorChooser.getSelectedIndex();
+                setShapeColorChooser(shapeColorIndex);
             }
+            
             // Change shapeMode depending on user selection. Note that shapeMode is an
-            // integer, representing
-            // the type of shape.
+            // integer, representing the type of shape.
             else if (e.getSource() == shapeChooser) {
                 shapeMode = shapeChooser.getSelectedIndex();
-
-                // Disable isFilled checkbox depending on context.
-                if (shapeMode == LINE_MODE) {
-                    fillBox.setEnabled(false);
-                } else {
-                    fillBox.setEnabled(true);
-                }
-
-                // Inform drawPanel of shapeMode.
-                drawPanel.setShapeMode(shapeMode);
+                setShapeModeChooser(shapeMode);
             }
 
             // Change selectedColor depending on user selection.
             else if (e.getSource() == gradientChooser) {
-                shapeColor = colorValues[gradientChooser.getSelectedIndex()];
-                drawPanel.setGradientColor(shapeColor);
+                shapeColorIndex = gradientChooser.getSelectedIndex();
+                setGradientColorChooser(shapeColorIndex);
             }
         }
     }
@@ -368,7 +354,7 @@ public class DrawFrame extends JFrame {
 
         // Change title label style.
         titleLabel.setFont(new Font("Courier", Font.BOLD, 20));
-        
+
         // Set alignments.
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         authorLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -400,7 +386,7 @@ public class DrawFrame extends JFrame {
         // Set default values.
         defaultLineWidthTextField.setValue(1);
         defaultDashLengthTextField.setValue(1);
-        
+
         // Set up prefPanel.
         JPanel prefPanel = new JPanel(new GridLayout(13, 1, 5, 10));
         prefPanel.add(defaultDashBox);
@@ -424,24 +410,297 @@ public class DrawFrame extends JFrame {
     // This method takes the current values of the default preferences and write them into a config file.
     private void writeDefaultPreferences() {
 
+        // Try writing to the config file location.
         try {
-            PrintWriter configOutput = new PrintWriter( "../settings/config" ); 
-            
+            PrintWriter configOutput = new PrintWriter("../settings/config");
+
             // Write to config and close file after finishing.
-            configOutput.println("dashed: "+defaultDashBox.isSelected());
-            configOutput.println("filled: "+defaultFilledBox.isSelected());
-            configOutput.println("gradient: "+defaultGradientBox.isSelected());
-            configOutput.println("shape_type: "+defaultShapeChooser.getSelectedItem());
-            configOutput.println("primary_color: "+defaultColorChooser.getSelectedItem());
-            configOutput.println("gradient_color: "+defaultGradientChooser.getSelectedItem());
-            configOutput.println("line_width: "+defaultLineWidthTextField.getValue());
-            configOutput.println("dash_length: "+defaultDashLengthTextField.getValue());
+            configOutput.println("#This is the default preference config. It will be loaded on startup.\n");
+            configOutput.println("dashed: " + defaultDashBox.isSelected());
+            configOutput.println("filled: " + defaultFilledBox.isSelected());
+            configOutput.println("gradient: " + defaultGradientBox.isSelected()+"\n");
+            configOutput.println("# 0 for line, 1 for rectangles, and 2 for ovals.");
+            configOutput.println("shape_mode: " + defaultShapeChooser.getSelectedIndex()+"\n");
+            configOutput.println(
+                    "# choose colors from black, white, red, green, blue, cyan, pink, yellow, magenta, orange, and gray");
+            configOutput.println("primary_color: " + defaultColorChooser.getSelectedItem());
+            configOutput.println("gradient_color: " + defaultGradientChooser.getSelectedItem()+"\n");
+            configOutput.println("line_width: " + defaultLineWidthTextField.getValue());
+            configOutput.println("dash_length: " + defaultDashLengthTextField.getValue()+"\n");
+
+            // Close writing file after finishing. 
             configOutput.close();
-        }
-        catch ( IOException ioException ) {
-            System.err.println( "Java Exception: " + ioException );
-            System.out.println( "Sorry, error with outputting to config file." );
+        } 
+        // Catch exceptions for IOException in the case that the file is not found. Inform user.
+        catch (IOException exception) {
+            System.err.println("Java Exception: " + exception);
+            System.out.println("Sorry, error with outputting to config file.");
         }
     }
 
+    // Find config file, load it up by changing variables and object properties.
+    private void loadDefaultPreferences() {
+
+        // Try to open config file for reading.
+        try {
+            
+            // Set up variables and objects needed for reading.
+            Scanner configInput = new Scanner(new File("../settings/config"));
+            String configLine;
+            String key = "";
+            String value = "";
+            int indexFlag;
+            int unitFlag;
+            boolean booleanFlag;
+            Scanner tokens;
+
+            // Read all lines of config.
+            while (configInput.hasNext()) {
+
+                // Save each line and read only the first two tokens of each line.
+                configLine = configInput.nextLine();
+                tokens = new Scanner(configLine);
+                // Save key/first token.
+                if (tokens.hasNext()) {
+                    key = tokens.next();
+                }
+                // Save value/second token.
+                if (tokens.hasNext()) {
+                    value = tokens.next();
+                }
+
+                // Depending on the key, use the value correctly to configure program properties.
+                switch (key) {
+                    case "#":
+
+                        // This indicates a comment within the config, ignore immediately.
+                        break;
+
+                    case "dashed:":
+
+                        booleanFlag = Boolean.parseBoolean(value);
+                        setDashBox(booleanFlag);
+                        break;
+
+                    case "filled:":
+
+                        booleanFlag = Boolean.parseBoolean(value);
+                        setFillBox(booleanFlag);
+                        break;
+
+                    case "gradient:":
+
+                        booleanFlag = Boolean.parseBoolean(value);
+                        setGradientBox(booleanFlag);
+                        break;
+
+                    case "shape_mode:":
+
+                        try {
+                            indexFlag = Integer.parseInt(value);
+                        }
+                        // If value cannot be parsed into integer.
+                        catch (NumberFormatException exception) {
+                            // Set default to 0 for lines.
+                            indexFlag = 0;
+                        }
+                        // To causes the itemStateChange method to run.
+                        shapeChooser.setSelectedIndex(indexFlag);
+                        break;
+
+                    case "primary_color:":
+
+                        indexFlag = findIndexWithValue(colorChooser, value);
+                        // If index not == -1 (not found), continue changing properties.
+                        if (indexFlag != -1) {
+                            // To causes the itemStateChange method to run.
+                            colorChooser.setSelectedIndex(indexFlag);
+                        }
+                        break;
+
+                    case "gradient_color:":
+
+                        indexFlag = findIndexWithValue(colorChooser, value);
+                        // If index not == -1 (not found), continue changing properties.
+                        if (indexFlag != -1) {
+                            // To causes the itemStateChange method to run.
+                            gradientChooser.setSelectedIndex(indexFlag);
+                        }
+                        break;
+
+                    case "line_width:":
+
+                        try {
+                            unitFlag = Integer.parseInt(value);
+                        }
+                        // If value cannot be parsed into integer.
+                        catch (NumberFormatException exception) {
+                            // Set default to 1.
+                            unitFlag = 1;
+                        }
+                        // This causes the propertyChange method to run.
+                        lineWidthTextField.setValue((Integer) unitFlag);
+                        break;
+
+                    case "dash_length:":
+
+                        try {
+                            unitFlag = Integer.parseInt(value);
+                        } catch (NumberFormatException exception) {
+                            // Set default to 1.
+                            unitFlag = 1;
+                        }
+                        // This causes the propertyChange method to run.
+                        dashLengthTextField.setValue((Integer) unitFlag);
+                        break;
+                }
+
+            }
+
+            // Close reader after finishing.
+            configInput.close();
+
+        } 
+        
+        // Catches cases where read file is not found. Inform user.
+        catch (IOException exception) {
+            System.err.println("Java Exception: " + exception);
+            System.out.println("Sorry, unable to open the config file for reading. Please create a new one in 'Preferences'.");
+        }
+
+    }
+
+    /*
+     * This method takes a String comboBox and a String value. It loops through the
+     * comboBox to see if the value is / within the comboBox. If so, return its
+     * index. If not, return -1.
+     */
+    private int findIndexWithValue(JComboBox<String> comboBox, String value) {
+
+        // Create temporary variable.
+        int index = -1; 
+        
+        // Loop and save index when found.
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            if (comboBox.getItemAt(i).equalsIgnoreCase(value)) {
+                index = i;
+                break;
+            }
+        }
+
+        // Return final result (index).
+        return index;
+    }
+
+    /*
+     * This method correctly toggles fillBox by considering other relevant properties of the
+     * drawing panel. This method takes a boolean argument and toggles the filled property along with other relevant 
+     * properties.
+     */
+    private void setFillBox(boolean booleanFlag) {
+
+        // Toggle fill on.
+        if (booleanFlag) {
+            fillBox.setSelected(true);
+            drawPanel.setIsFilled(true);
+            lineWidthTextField.setEnabled(false);
+            dashLengthTextField.setEnabled(false);
+            dashBox.setEnabled(false);
+        } 
+        // Toggle fill off.
+        else {
+            fillBox.setSelected(false);
+            drawPanel.setIsFilled(false);
+            lineWidthTextField.setEnabled(true);
+            dashLengthTextField.setEnabled(true);
+            dashBox.setEnabled(true);
+        }
+    }
+
+    /*
+     * This method correctly toggles gradientBox by considering other relevant properties of the
+     * drawing panel. This method takes a boolean argument and toggles the gradient property along with other relevant 
+     * properties.
+     */
+    private void setGradientBox(boolean booleanFlag) {
+        // Toggle gradient on.
+        if (booleanFlag) {
+            gradientBox.setSelected(true);
+            ;
+            drawPanel.setIsGradient(true);
+            gradientChooser.setEnabled(true);
+        } 
+        // Toggle gradient off.
+        else {
+            gradientBox.setSelected(false);
+            ;
+            drawPanel.setIsGradient(false);
+            gradientChooser.setEnabled(false);
+        }
+    }
+
+    /*
+     * This method correctly toggles dashBox by considering other relevant properties of the
+     * drawing panel. This method takes a boolean argument and toggles the dashed property along with other relevant 
+     * properties.
+     */
+    private void setDashBox(boolean booleanFlag) {
+        // Toggle dash on.
+        if (booleanFlag) {
+            dashBox.setSelected(true);
+            drawPanel.setIsDashed(true);
+            dashLengthTextField.setEnabled(true);
+        } 
+        // Toggle dash off.
+        else {
+            dashBox.setSelected(false);
+            drawPanel.setIsDashed(false);
+            dashLengthTextField.setEnabled(false);
+        }
+    }
+
+    /*
+     * This method correctly sets the shapeMode by considering other relevant properties of the
+     * drawing panel. This method takes a int argument and sets the shapeMode.
+     */
+    private void setShapeModeChooser(int shapeMode) {
+
+        // Disable isFilled checkbox depending on context.
+        if (shapeMode == LINE_MODE) {
+            fillBox.setEnabled(false);
+        } else {
+            fillBox.setEnabled(true);
+        }
+
+        // Inform drawPanel of shapeMode.
+        drawPanel.setShapeMode(shapeMode);
+    }
+
+    /*
+     * This method sets the drawPanel shape color with a given index of the colorValues array.
+     */
+    private void setShapeColorChooser(int shapeColorIndex) {
+        drawPanel.setShapeColor(colorValues[shapeColorIndex]);
+    }
+
+    /*
+     * This method sets the drawPanel gradient color with a given index of the colorValues array.
+     */
+    private void setGradientColorChooser(int shapeColorIndex) {
+        drawPanel.setGradientColor(colorValues[shapeColorIndex]);
+    }
+
+    /*
+     * This method sets the drawPanel lineWidth with a given int value in pixels.
+     */
+    private void setLineWidthTextField(int lineWidth) {
+        drawPanel.setLineWidth(lineWidth);
+    }
+
+    /*
+     * This method sets the drawPanel dashLength with a given int value in pixels.
+     */
+    private void setDashLengthTextField(int lineWidth) {
+        drawPanel.setDashLength(lineWidth);
+    }
 }
