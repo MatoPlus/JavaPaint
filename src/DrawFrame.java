@@ -708,7 +708,10 @@ public class DrawFrame extends JFrame {
 
         // Disable isFilled checkbox depending on context.
         if (shapeMode == LINE_MODE) {
+            fillBox.setSelected(false);
             fillBox.setEnabled(false);
+            dashBox.setEnabled(true);
+            lineWidthTextField.setEnabled(true);
         } else {
             fillBox.setEnabled(true);
         }
