@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import javax.swing.text.NumberFormatter;
 import javax.swing.JFormattedTextField;
@@ -13,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,6 +22,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import java.awt.Graphics;
+import javax.imageio.ImageIO;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
@@ -60,6 +64,7 @@ public class DrawFrame extends JFrame {
     private JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenuItem aboutItem;
+    private JMenuItem saveItem;
     private JMenuItem prefItem;
     private JMenuItem exitItem;
     private int shapeColorIndex;
@@ -102,6 +107,7 @@ public class DrawFrame extends JFrame {
         menuBar = new JMenuBar();
         fileMenu = new JMenu("Files");
         aboutItem = new JMenuItem("About");
+        saveItem = new JMenuItem("Save PNG");
         prefItem = new JMenuItem("Preferences");
         exitItem = new JMenuItem("Exit");
 
@@ -115,6 +121,7 @@ public class DrawFrame extends JFrame {
         // Set up menu.
         menuBar.add(fileMenu);
         fileMenu.add(aboutItem);
+        fileMenu.add(saveItem);
         fileMenu.add(prefItem);
         fileMenu.add(exitItem);
 
@@ -141,6 +148,7 @@ public class DrawFrame extends JFrame {
 
         // Associate menu items with event listeners.
         aboutItem.addActionListener(menuListener);
+        saveItem.addActionListener(menuListener);
         prefItem.addActionListener(menuListener);
         exitItem.addActionListener(menuListener);
 
@@ -236,7 +244,7 @@ public class DrawFrame extends JFrame {
             // This allows us to use one event listener for more than one JButton, if
             // desired.
 
-            // Show information about the program on called.
+            // Call menu to save preference.
             if (e.getSource() == prefItem) {
 
                 // Get result back from preference dialog.
@@ -248,11 +256,44 @@ public class DrawFrame extends JFrame {
                     writeDefaultPreferences();
                 }
 
-            } else if (e.getSource() == aboutItem) {
+            }
+            // Show information about the program on called.
+            else if (e.getSource() == aboutItem) {
 
                 // Show about dialog via JOptionPane.
                 JOptionPane.showMessageDialog(null, getAboutPanel(), "About", JOptionPane.PLAIN_MESSAGE, null);
             }
+
+            // Call menu to save drawPanel as png.
+            else if (e.getSource() == saveItem) {
+
+                JFileChooser fileChooser = new JFileChooser();
+
+                // Create image with correct resolution to be saved.
+                BufferedImage image = new BufferedImage(drawPanel.getWidth(), drawPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+                // Save drawPanel on image.
+                Graphics g = image.getGraphics();
+                drawPanel.print(g);
+                g.dispose();
+
+                // Show file chooser to save file.
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = new File(fileChooser.getSelectedFile()+".png");
+
+                    // Try to save image given all required parameters.
+                    try {
+                    ImageIO.write(image, "png", selectedFile);
+                    }
+                    // Catches where the selected file cannot be chosen.
+                    catch (IOException exception) {
+                        System.err.println("Java Exception: " + exception);
+                        System.out.println("Sorry, error with saving image to file.");
+                    }
+                }
+            }
+
             // Exit program upon called.
             else if (e.getSource() == exitItem) {
                 System.exit(0);
