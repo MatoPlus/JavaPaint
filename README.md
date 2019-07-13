@@ -14,6 +14,7 @@ A Painting/Drawing Program written in Java.
 - A statusbar with the current mouse position.
 - Menubar with options like 'About', 'Preferences', and 'Exit'.
 - Robust config file for default preferences.
+- Save panel as PNG image.
 
 # To Be Implemented
 - The constructors for the shape classes are too long. Shorter alternatives will be added.
