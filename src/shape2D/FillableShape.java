@@ -15,8 +15,26 @@ public abstract class FillableShape extends Shape {
     
     // Paratermized constructor. Receives x1, y1, x2, y2 as coordinates of diagonal end points. Further receives color,
     // gradient properties, and isFilled to initialize the line.
-    public FillableShape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isDashed, int dashLength, boolean isFilled) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth, isDashed, dashLength);
+    public FillableShape(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor, boolean isDashed, int dashLength, boolean isFilled) {
+        super(x1, y1, x2, y2, color, lineWidth, isGradient, gradientColor, isDashed, dashLength);
+        setIsFilled(isFilled);
+    }
+
+    // Alternative constructor without dash line properties.
+    public FillableShape(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor, boolean isFilled) {
+        super(x1, y1, x2, y2, color, lineWidth, isGradient, gradientColor);
+        setIsFilled(isFilled);
+    }
+
+    // Alternative constructor without gradient properties.
+    public FillableShape(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isFilled) {
+        super(x1, y1, x2, y2, color, lineWidth);
+        setIsFilled(isFilled);
+    }
+
+    // Alternative constructor without line width property.
+    public FillableShape(int x1, int y1, int x2, int y2, Color color, boolean isFilled) {
+        super(x1, y1, x2, y2, color);
         setIsFilled(isFilled);
     }
 

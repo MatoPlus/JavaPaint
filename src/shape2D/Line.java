@@ -15,8 +15,23 @@ public class Line extends Shape {
     
     // Paratermized constructor. Receives ints for x1, y1, x2, y2 as coordinates of diagonal end points.
     // Further receives color and gradient properties to initialize line.
-    public Line(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isDashed, int dashLength) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth, isDashed, dashLength);
+    public Line(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor, boolean isDashed, int dashLength) {
+        super(x1, y1, x2, y2, color, lineWidth, isGradient, gradientColor, isDashed, dashLength);
+    }
+
+    // Alternative constructor without dash line properties.
+    public Line(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor) {
+        super(x1, y1, x2, y2, color, lineWidth, isGradient, gradientColor);
+    }
+
+    // Alternative constructor without gradient properties.
+    public Line(int x1, int y1, int x2, int y2, Color color, int lineWidth) {
+        super(x1, y1, x2, y2, color, lineWidth);
+    }
+
+    // Alternative constructor without line width property.
+    public Line(int x1, int y1, int x2, int y2, Color color) {
+        super(x1, y1, x2, y2, color);
     }
     
     // Determine how to draw graphic when called.

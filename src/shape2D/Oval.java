@@ -15,8 +15,23 @@ public class Oval extends FillableShape{
     
     // Paratermized constructor. Receives ints for x1, y1, x2, y2 as coordinates of diagonal end points. 
     // Further receives color, gradient properties, and filled as boolean to initialize the oval. 
-    public Oval(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isDashed, int dashLength, boolean isFilled) {
-        super(x1, y1, x2, y2, color, isGradient, gradientColor, lineWidth, isDashed, dashLength, isFilled);
+    public Oval(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor, boolean isDashed, int dashLength, boolean isFilled) {
+        super(x1, y1, x2, y2, color, lineWidth, isGradient, gradientColor, isDashed, dashLength, isFilled);
+    }
+    
+    // Alternative constructor without dash line properties.
+    public Oval(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor, boolean isFilled) {
+        super(x1, y1, x2, y2, color, lineWidth, isGradient, gradientColor, isFilled);
+    }
+    
+    // Alternative constructor without gradient properties.
+    public Oval(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isFilled) {
+        super(x1, y1, x2, y2, color, lineWidth, isFilled);
+    }
+    
+    // Alternative constructor without line width property.
+    public Oval(int x1, int y1, int x2, int y2, Color color, boolean isFilled) {
+        super(x1, y1, x2, y2, color, isFilled);
     }
     
     // Determines how to draw graphic when called.

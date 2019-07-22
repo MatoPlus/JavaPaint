@@ -25,7 +25,7 @@ public abstract class Shape {
     // Parameterized constructor. Takes ints for x1, y1, x2, y2 as coordinates of diagonal endpoints.
     // Also, a color argument and all the remaining arguments is used to define the properties of the shape.
     // These properties are used to initialize properties of the shape.
-    public Shape(int x1, int y1, int x2, int y2, Color color, boolean isGradient, Color gradientColor, int lineWidth, boolean isDashed, int dashLength) {
+    public Shape(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor, boolean isDashed, int dashLength) {
         setX1(x1);
         setY1(y1);
         setX2(x2);
@@ -36,6 +36,48 @@ public abstract class Shape {
         setLineWidth(lineWidth);
         setIsDashed(isDashed);
         setDashLength(dashLength);
+    }
+
+    // Alternative constructor without dashed lines properties.
+    public Shape(int x1, int y1, int x2, int y2, Color color, int lineWidth, boolean isGradient, Color gradientColor) {
+        setX1(x1);
+        setY1(y1);
+        setX2(x2);
+        setY2(y2);
+        setColor(color);
+        setLineWidth(lineWidth);
+        setIsGradient(isGradient);
+        setGradientColor(gradientColor);
+        setIsDashed(false);
+        setDashLength(1);
+    }
+
+    // Alternative constructor without gradient properties.
+    public Shape(int x1, int y1, int x2, int y2, Color color, int lineWidth) {
+        setX1(x1);
+        setY1(y1);
+        setX2(x2);
+        setY2(y2);
+        setColor(color);
+        setLineWidth(lineWidth);
+        setIsGradient(false);
+        setGradientColor(color);
+        setIsDashed(false);
+        setDashLength(1);
+    }
+
+    // Alternative constructor without lineWidth property.
+    public Shape(int x1, int y1, int x2, int y2, Color color) {
+        setX1(x1);
+        setY1(y1);
+        setX2(x2);
+        setY2(y2);
+        setColor(color);
+        setLineWidth(1);
+        setIsGradient(false);
+        setGradientColor(color);
+        setIsDashed(false);
+        setDashLength(1);
     }
 
     // Accessor method for x1. Returns x1 as int.
@@ -142,7 +184,14 @@ public abstract class Shape {
 
     // Mutator method for line width. It sets the new int argument as new lineWidth;
     public void setLineWidth(int lineWidth) {
-        this.lineWidth = lineWidth;
+
+        // Sanity check to invalidate non-positive values.
+        if (lineWidth > 0) {
+            this.lineWidth = lineWidth;
+        }
+        else {
+            System.err.println("Attempt to set lineWidth to a value less than 1");
+        }
     }
 
     // Accessor method for line width. Returns a int type.
@@ -162,7 +211,13 @@ public abstract class Shape {
 
     // Mutator method for dash length. It sets the new int argument as new dashLength;
     public void setDashLength(int dashLength) {
-        this.dashLength = dashLength;
+        // Sanity check to invalidate non-positive values.
+        if (dashLength > 0) {
+            this.dashLength = dashLength;
+        }
+        else {
+            System.err.println("Attempt to set dashLength to a value less than 1");
+        }
     }
 
     // Accessor method for dash length. Returns a int type.
@@ -175,8 +230,8 @@ public abstract class Shape {
     
     // toString method, returns string representing shape with properties.
     public String toString() {
-        return ("x1:"+x1+", y1:"+y1+", x2:"+x2+", y2:"+y2+", color:"+color+" isGradient:"+isGradient+
-        " GradientColor:"+gradientColor+" lineWidth:"+lineWidth+" isDashed:"+isDashed+" dashLength:"+dashLength);
+        return ("x1:"+x1+", y1:"+y1+", x2:"+x2+", y2:"+y2+", color:"+color+" lineWidth:"+lineWidth+" isGradient:"+isGradient+
+        " GradientColor:"+gradientColor+" isDashed:"+isDashed+" dashLength:"+dashLength);
     }    
 
 }   
