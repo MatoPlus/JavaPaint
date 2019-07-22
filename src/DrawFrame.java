@@ -107,7 +107,7 @@ public class DrawFrame extends JFrame {
         menuBar = new JMenuBar();
         fileMenu = new JMenu("Files");
         aboutItem = new JMenuItem("About");
-        saveItem = new JMenuItem("Save PNG");
+        saveItem = new JMenuItem("Save as PNG");
         prefItem = new JMenuItem("Preferences");
         exitItem = new JMenuItem("Exit");
 
