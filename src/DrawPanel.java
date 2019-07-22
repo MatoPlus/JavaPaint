@@ -140,13 +140,13 @@ public class DrawPanel extends JPanel {
 
                 // Decide which shape to draw depending on current shape type.
                 if (shapeMode == LINE_MODE) {
-                    currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isDashed, dashLength);
+                    currentShape = new Line(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, lineWidth, isGradient, gradientColor, isDashed, dashLength);
                 }
                 else if (shapeMode == RECT_MODE) {
-                    currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isDashed, dashLength, isFilled);
+                    currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, lineWidth, isGradient, gradientColor, isDashed, dashLength, isFilled);
                 }
                 else if (shapeMode == OVAL_MODE) {
-                    currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, isGradient, gradientColor, lineWidth, isDashed, dashLength, isFilled);
+                    currentShape = new Oval(event.getX(), event.getY(), event.getX(), event.getY(), shapeColor, lineWidth, isGradient, gradientColor, isDashed, dashLength, isFilled);
                 }
                 // Tell JVM to call paintComponent( g )
                 repaint();
