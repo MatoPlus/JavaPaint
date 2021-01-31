@@ -7,7 +7,7 @@
 
 A Painting/Drawing Program written in Java.
 
-# Features 
+## Features 
 - Uses personally written data structures from ADT to handle shapes drawn.
 - Uses personally written 2D shapes from ADT that users may choose to draw.
 - Ability to undo and redo.
@@ -19,8 +19,5 @@ A Painting/Drawing Program written in Java.
 - Robust config file for default preferences.
 - Save panel as PNG image.
 
-# To Be Implemented
-- The constructors for the shape classes are too long. Shorter alternatives will be added.
-
-# Known Bugs
+## Known Bugs
 - TextFields allows non-integer inputs.
