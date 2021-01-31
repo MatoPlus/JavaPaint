@@ -1,5 +1,8 @@
 # JavaPaint
 
+![License: MIT](https://img.shields.io/github/license/codeprentice-org/fanotify.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/codeprentice-org/fanotify.svg)
+
 ![JavaPaint: Demo](demo/demo.png "JavaPaint: Demo")
 
 A Painting/Drawing Program written in Java.
